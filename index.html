@@ -33,3 +33,59 @@
   </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トラック停車位置の状態</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    #status { font-size: 2em; margin: 20px; padding: 20px; color: white; }
+    .button { padding: 10px 20px; font-size: 1em; cursor: pointer; }
+    .available { background-color: green; }
+    .occupied { background-color: red; }
+  </style>
+</head>
+<body>
+
+  <div id="status">状態を読み込んでいます...</div>
+
+  <!-- 状態を切り替えるボタン -->
+  <button class="button available" id="setAvailable">空きにする</button>
+  <button class="button occupied" id="setOccupied">満車にする</button>
+
+  <script>
+    setInterval(function() {
+        fetch('status.json')
+            .then(response => response.json())
+            .then(data => {
+                const statusElement = document.getElementById('status');
+                statusElement.innerHTML = data.status;
+                if (data.status === "Available") {
+                    statusElement.classList.add('available');
+                    statusElement.classList.remove('occupied');
+                } else if (data.status === "Occupied") {
+                    statusElement.classList.add('occupied');
+                    statusElement.classList.remove('available');
+                }
+            });
+    }, 10000); // 10秒ごとに更新
+
+    // 「空き」に切り替えるボタンのクリックイベント
+    document.getElementById('setAvailable').addEventListener('click', function() {
+        fetch('updateStatus.php?status=Available')
+            .then(response => response.json())
+            .then(data => console.log('空き状態に更新'));
+    });
+
+    // 「満車」に切り替えるボタンのクリックイベント
+    document.getElementById('setOccupied').addEventListener('click', function() {
+        fetch('updateStatus.php?status=Occupied')
+            .then(response => response.json())
+            .then(data => console.log('満車状態に更新'));
+    });
+  </script>
+
+</body>
+</html>
