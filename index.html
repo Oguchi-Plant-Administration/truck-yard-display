@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>トラック停車位置1番</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    .status { font-size: 2em; padding: 1em; border-radius: 10px; width: 80%; margin: auto; }
+    .available { background: #b2fab4; color: #085f08; }
+    .occupied { background: #fab2b2; color: #850000; }
+  </style>
+</head>
+<body>
+  <h2>1番 停車位置</h2>
+  <div id="status" class="status">読み込み中...</div>
+
+  <script>
+    async function loadStatus() {
+      try {
+        const res = await fetch('status.json');
+        const data = await res.json();
+        const el = document.getElementById('status');
+        el.textContent = data.status === 'Available' ? '空き' : '満車';
+        el.className = 'status ' + (data.status === 'Available' ? 'available' : 'occupied');
+      } catch (e) {
+        document.getElementById('status').textContent = '読み込み失敗';
+      }
+    }
+
+    loadStatus();
+    setInterval(loadStatus, 10000); // 10秒ごとに更新
+  </script>
+</body>
+</html>
